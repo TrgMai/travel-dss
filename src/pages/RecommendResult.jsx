@@ -1,0 +1,188 @@
+import { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { commonStyles } from "../styles/common";
+
+export default function RecommendResult() {
+  const [allData, setAllData] = useState(null);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    // Lấy tất cả dữ liệu từ localStorage
+    const phase1Data = JSON.parse(localStorage.getItem('phase1Data') || '{}');
+    const phase2Data = JSON.parse(localStorage.getItem('phase2Data') || '{}');
+    const phase3Data = JSON.parse(localStorage.getItem('phase3Data') || '{}');
+
+    // Kiểm tra nếu thiếu data thì quay lại phase 1
+    if (!phase1Data.groupType || !phase2Data.location || !phase3Data.interests) {
+      navigate('/recommend/phase1');
+      return;
+    }
+
+    // Parse dates back to Date objects
+    const data = { ...phase1Data, ...phase2Data, ...phase3Data };
+    if (data.startDate) {
+      data.startDate = new Date(data.startDate);
+      data.endDate = new Date(data.endDate);
+    }
+
+    setAllData(data);
+  }, [navigate]);
+
+  if (!allData) return null;
+
+  const formatBudget = (value) => {
+    return new Intl.NumberFormat('vi-VN', {
+      style: 'currency',
+      currency: 'VND'
+    }).format(value);
+  };
+
+  const formatDate = (date) => {
+    return new Intl.DateTimeFormat('vi-VN', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric'
+    }).format(date);
+  };
+
+  const getGroupTypeText = (type) => {
+    const types = {
+      family: "Gia đình",
+      friends: "Nhóm bạn bè",
+      couple: "Cặp đôi",
+      colleagues: "Đồng nghiệp",
+      solo: "Du lịch một mình"
+    };
+    return types[type] || type;
+  };
+
+  const getLocationText = (loc) => {
+    const locations = {
+      beach: "Biển",
+      mountain: "Núi",
+      city: "Thành phố",
+      countryside: "Miền quê"
+    };
+    return locations[loc] || loc;
+  };
+
+  const getStartingPointText = (point) => {
+    const points = {
+      hcm: "TP. Hồ Chí Minh",
+      hanoi: "Hà Nội",
+      danang: "Đà Nẵng"
+    };
+    return points[point] || point;
+  };
+
+  const getInterestText = (interest) => {
+    const interests = {
+      nature: "Khám phá thiên nhiên",
+      culture: "Văn hóa địa phương",
+      food: "Ẩm thực",
+      adventure: "Phiêu lưu mạo hiểm",
+      relaxation: "Nghỉ dưỡng",
+      photography: "Chụp ảnh"
+    };
+    return interests[interest] || interest;
+  };
+
+  return (
+    <div className={commonStyles.container}>
+      {/* Progress Bar */}
+      <div className={commonStyles.progressBar}>
+        <div className={commonStyles.progressStep} style={{ width: "100%" }}></div>
+      </div>
+
+      <h1 className={commonStyles.title}>
+        Tổng Hợp Thông Tin Chuyến Đi
+      </h1>
+
+      <div className={commonStyles.card}>
+        <div className="space-y-6">
+          {/* Thông tin nhóm */}
+          <div>
+            <h2 className="text-lg font-semibold text-gray-800 mb-3">Đối tượng và Số lượng</h2>
+            <div className="bg-gray-50 p-4 rounded-lg">
+              <p className="mb-2">
+                <span className="font-medium">Loại nhóm:</span> {getGroupTypeText(allData.groupType)}
+              </p>
+              <p>
+                <span className="font-medium">Số người:</span> {allData.groupSize} người
+              </p>
+            </div>
+          </div>
+
+          {/* Thời gian và địa điểm */}
+          <div>
+            <h2 className="text-lg font-semibold text-gray-800 mb-3">Thời gian và Địa điểm</h2>
+            <div className="bg-gray-50 p-4 rounded-lg">
+              <p className="mb-2">
+                <span className="font-medium">Thời gian:</span> {allData.duration}
+              </p>
+              <p className="mb-2">
+                <span className="font-medium">Ngày đi:</span> {formatDate(allData.startDate)}
+              </p>
+              <p className="mb-2">
+                <span className="font-medium">Ngày về:</span> {formatDate(allData.endDate)}
+              </p>
+              <p className="mb-2">
+                <span className="font-medium">Loại hình:</span> {getLocationText(allData.location)}
+              </p>
+              <div>
+                <span className="font-medium">Điểm khởi hành:</span>
+                <ul className="mt-2 space-y-1">
+                  {allData.startingPoints.map((sp, index) => (
+                    <li key={index} className="flex items-center gap-2 text-gray-600">
+                      <span>• {getStartingPointText(sp.point)}:</span>
+                      <span className="font-medium">{sp.people} người</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          {/* Sở thích và ngân sách */}
+          <div>
+            <h2 className="text-lg font-semibold text-gray-800 mb-3">Sở thích và Ngân sách</h2>
+            <div className="bg-gray-50 p-4 rounded-lg">
+              <p className="mb-3">
+                <span className="font-medium">Sở thích:</span>
+                <div className="flex flex-wrap gap-2 mt-2">
+                  {allData.interests.map(interest => (
+                    <span
+                      key={interest}
+                      className="px-3 py-1 bg-blue-50 text-blue-600 rounded-full text-sm"
+                    >
+                      {getInterestText(interest)}
+                    </span>
+                  ))}
+                </div>
+              </p>
+              <p>
+                <span className="font-medium">Ngân sách/người:</span> {formatBudget(allData.budget)}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Actions */}
+        <div className="mt-8 space-y-4">
+          <Link
+            to="/tours"
+            className={commonStyles.button}
+          >
+            Tìm Tour Phù Hợp →
+          </Link>
+          <Link
+            to="/"
+            className={commonStyles.buttonOutline}
+          >
+            ← Quay về trang chủ
+          </Link>
+        </div>
+      </div>
+    </div>
+  );
+} 

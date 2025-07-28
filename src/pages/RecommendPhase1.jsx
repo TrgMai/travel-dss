@@ -1,71 +1,92 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { commonStyles } from "../styles/common";
 
 export default function RecommendPhase1() {
-  const [mood, setMood] = useState("");
-  const [weather, setWeather] = useState("");
-  const [budget, setBudget] = useState(5000);
+  const [formData, setFormData] = useState({
+    groupType: "",
+    groupSize: "",
+  });
+
   const navigate = useNavigate();
 
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
   const handleNext = () => {
-    // Sau khi "phân tích" xong thì chuyển sang giai đoạn 2
+    // Lưu data vào localStorage để các phase sau có thể sử dụng
+    localStorage.setItem('phase1Data', JSON.stringify(formData));
     navigate("/recommend/phase2");
   };
 
+  const isFormValid = formData.groupType && formData.groupSize;
+
   return (
-    <div className="max-w-2xl mx-auto p-6">
-      <h1 className="text-2xl font-bold mb-4 text-center">
-        Giai đoạn 1: Bạn có nên đi du lịch?
+    <div className={commonStyles.container}>
+      {/* Progress Bar */}
+      <div className={commonStyles.progressBar}>
+        <div className={commonStyles.progressStep} style={{ width: "20%" }}></div>
+      </div>
+
+      <h1 className={commonStyles.title}>
+        Bước 1: Thông tin nhóm du lịch
       </h1>
 
-      <div className="mb-4">
-        <label className="block mb-1 font-medium">Tâm trạng hiện tại của bạn là gì?</label>
-        <select
-          value={mood}
-          onChange={(e) => setMood(e.target.value)}
-          className="w-full border p-2 rounded"
+      <div className={commonStyles.card}>
+        <div className={commonStyles.formGroup}>
+          <label className={commonStyles.label}>
+            Đối tượng du lịch của bạn là gì?
+          </label>
+          <select
+            name="groupType"
+            value={formData.groupType}
+            onChange={handleChange}
+            className={commonStyles.select}
+          >
+            <option value="">-- Chọn đối tượng --</option>
+            <option value="family">Gia đình</option>
+            <option value="friends">Nhóm bạn bè</option>
+            <option value="couple">Cặp đôi</option>
+            <option value="colleagues">Đồng nghiệp</option>
+            <option value="solo">Du lịch một mình</option>
+          </select>
+        </div>
+
+        <div className={commonStyles.formGroup}>
+          <label className={commonStyles.label}>
+            Số lượng người trong nhóm
+          </label>
+          <select
+            name="groupSize"
+            value={formData.groupSize}
+            onChange={handleChange}
+            className={commonStyles.select}
+          >
+            <option value="">-- Chọn số lượng --</option>
+            <option value="1">1 người</option>
+            <option value="2">2 người</option>
+            <option value="3">3 người</option>
+            <option value="4">4 người</option>
+            <option value="5-10">5-10 người</option>
+            <option value="10+">Trên 10 người</option>
+          </select>
+        </div>
+
+        <button
+          onClick={handleNext}
+          disabled={!isFormValid}
+          className={`${commonStyles.button} ${
+            !isFormValid ? 'opacity-50 cursor-not-allowed' : ''
+          }`}
         >
-          <option value="">-- Chọn --</option>
-          <option value="mệt mỏi">Mệt mỏi</option>
-          <option value="căng thẳng">Căng thẳng</option>
-          <option value="vui vẻ">Vui vẻ</option>
-        </select>
+          Tiếp tục →
+        </button>
       </div>
-
-      <div className="mb-4">
-        <label className="block mb-1 font-medium">Bạn muốn thời tiết thế nào?</label>
-        <select
-          value={weather}
-          onChange={(e) => setWeather(e.target.value)}
-          className="w-full border p-2 rounded"
-        >
-          <option value="">-- Chọn --</option>
-          <option value="mát mẻ">Mát mẻ</option>
-          <option value="nắng ấm">Nắng ấm</option>
-          <option value="có tuyết">Có tuyết</option>
-        </select>
-      </div>
-
-      <div className="mb-6">
-        <label className="block mb-1 font-medium">Ngân sách dự kiến của bạn:</label>
-        <input
-          type="range"
-          min="1000"
-          max="10000"
-          step="500"
-          value={budget}
-          onChange={(e) => setBudget(e.target.value)}
-          className="w-full"
-        />
-        <p className="text-center mt-1 text-blue-600 font-bold">{budget}k VNĐ</p>
-      </div>
-
-      <button
-        onClick={handleNext}
-        className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded font-semibold"
-      >
-        Tiếp tục đến giai đoạn 2 →
-      </button>
     </div>
   );
 }
