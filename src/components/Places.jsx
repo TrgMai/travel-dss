@@ -32,7 +32,7 @@ function PlaceCard({ place }) {
             {place.title}
           </h3>
           <span className="text-sm text-gray-500">
-            {place.reviews} reviews
+            {place.reviews} đánh giá
           </span>
         </div>
         
@@ -60,7 +60,7 @@ function PlaceCard({ place }) {
 
         <div className="mt-4 flex items-center justify-between">
           <div className="text-blue-600">
-            <span className="text-sm">From</span>
+            <span className="text-sm">Chỉ từ</span>
             <div className="font-bold">{formatPrice(place.price)}</div>
           </div>
           
@@ -68,7 +68,7 @@ function PlaceCard({ place }) {
             to={`/place/${place.id}`}
             className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-200"
           >
-            View Details
+            Xem chi tiết
           </Link>
         </div>
       </div>
@@ -85,7 +85,7 @@ function DestinationSection({ title, places }) {
           to="/all-destinations" 
           className="text-blue-600 hover:text-blue-700 font-semibold"
         >
-          View All
+          Xem tất cả
         </Link>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -113,21 +113,21 @@ function Places({ searchData }) {
     <div className="container max-w-7xl mx-auto px-4 py-12">
       <div className="text-center mb-12">
         <h1 className="text-3xl font-bold text-gray-800 mb-4">
-          Popular Destinations
+          Địa điểm đáng ghé thăm
         </h1>
         <p className="text-gray-600 max-w-2xl mx-auto">
-          Discover the most popular travel destinations, from stunning beaches to vibrant cities,
-          carefully curated for your next adventure.
+          Khám phá những địa điểm đáng ghé thăm, từ bãi biển đẹp đến thành phố sôi động,
+          được tuyển chọn cẩn thận cho chuyến du lịch của bạn.
         </p>
       </div>
 
       <DestinationSection 
-        title="Domestic Destinations" 
+        title="Địa điểm trong nước" 
         places={filterPlaces(placesData.domestic)} 
       />
       
       <DestinationSection 
-        title="International Destinations" 
+        title="Địa điểm quốc tế" 
         places={filterPlaces(placesData.international)} 
       />
     </div>
