@@ -4,7 +4,10 @@ import Home from "./pages/Home";
 import Detail from "./pages/Detail";
 import RecommendPhase1 from "./pages/RecommendPhase1";
 import RecommendPhase2 from "./pages/RecommendPhase2";
-
+import RecommendPhase3 from "./pages/RecommendPhase3";
+import RecommendResult from "./pages/RecommendResult";
+import TourList from "./pages/TourList";
+import TourDetail from "./pages/TourDetail";
 
 export default function App() {
   return (
@@ -14,6 +17,10 @@ export default function App() {
         <Route path="/place/:id" element={<Detail />} />
         <Route path="/recommend/phase1" element={<RecommendPhase1 />} />
         <Route path="/recommend/phase2" element={<RecommendPhase2 />} />
+        <Route path="/recommend/phase3" element={<RecommendPhase3 />} />
+        <Route path="/recommend/result" element={<RecommendResult />} />
+        <Route path="/tours" element={<TourList />} />
+        <Route path="/tour/:id" element={<TourDetail />} />
       </Routes>
     </BrowserRouter>
   );

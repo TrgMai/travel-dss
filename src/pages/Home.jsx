@@ -6,20 +6,19 @@ import SearchBar from "../components/SearchBar";
 import Places from "../components/Places";
 import Footer from "../components/Footer";
 import StartRecommendation from "../components/StartRecommendation";
+import Promotions from "../components/Promotions";
 
 export default function Home() {
-  const [searchData, setSearchData] = useState(null);
-
-  const handleSearch = (data) => {
-    setSearchData(data);
-  };
+  const [searchData] = useState(null);
 
   return (
     <div className="font-sans">
       <TopBar />
       <Header />
-      <Hero />
-      <SearchBar onSearch={handleSearch} />
+      <Hero /> 
+      <div className="max-w-7xl mx-auto">
+        <Promotions />
+      </div>
       <StartRecommendation />
       <Places searchData={searchData} />
       <Footer />
