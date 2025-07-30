@@ -1,16 +1,106 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { FaSearch, FaMapMarkerAlt, FaCalendar, FaUsers } from "react-icons/fa";
+import { DateRange } from 'react-date-range';
+import { format } from 'date-fns';
+import 'react-date-range/dist/styles.css';
+import 'react-date-range/dist/theme/default.css';
+import vi from 'date-fns/locale/vi';
 
 export default function Hero() {
-  const [searchParams, setSearchParams] = useState({
-    destination: "",
-    dates: "",
-    travelers: "2 người"
+  const navigate = useNavigate();
+  const [destination, setDestination] = useState("");
+  const [dateRange, setDateRange] = useState([
+    {
+      startDate: new Date(),
+      endDate: new Date(),
+      key: 'selection'
+    }
+  ]);
+  const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
+  const [isGuestDropdownOpen, setIsGuestDropdownOpen] = useState(false);
+  const [guests, setGuests] = useState({
+    adults: 1,
+    children: 0,
+    rooms: 1
   });
 
-  const handleSearch = (e) => {
+  const handleSearch = async (e) => {
     e.preventDefault();
-    // Handle search logic here
+    if (!destination) return;
+    
+    try {
+      // Chuẩn hóa tên địa điểm người dùng nhập
+      const searchKey = destination.toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/đ/g, "d")
+        .trim()
+        .replace(/\s+/g, "-");
+
+      // Danh sách các địa điểm và file tương ứng
+      const destinationMap = {
+        'da-nang': 'da-nang',
+        'danang': 'da-nang',
+        'đà-nẵng': 'da-nang',
+        'da-lat': 'da-lat',
+        'dalat': 'da-lat',
+        'đà-lạt': 'da-lat',
+        'nha-trang': 'nha-trang',
+        'nhatrang': 'nha-trang',
+        'phu-quoc': 'phu-quoc',
+        'phuquoc': 'phu-quoc',
+        'phú-quốc': 'phu-quoc',
+        'phan-thiet': 'phan-thiet',
+        'phanthiet': 'phan-thiet',
+        'phan-thiết': 'phan-thiet',
+        'quy-nhon': 'quy-nhon',
+        'quynhon': 'quy-nhon',
+        'quy-nhơn': 'quy-nhon',
+        'vung-tau': 'vung-tau',
+        'vungtau': 'vung-tau',
+        'vũng-tàu': 'vung-tau',
+        'phu-yen': 'phu-yen',
+        'phuyen': 'phu-yen',
+        'phú-yên': 'phu-yen'
+      };
+
+      // Tìm file tương ứng với địa điểm
+      const fileName = destinationMap[searchKey];
+      
+      if (!fileName) {
+        alert('Không tìm thấy khách sạn tại địa điểm này');
+        return;
+      }
+
+      // Tạo search params với đầy đủ thông tin
+      const searchParams = new URLSearchParams({
+        destination: searchKey,
+        checkIn: format(dateRange[0].startDate, 'dd/MM/yyyy'),
+        checkOut: format(dateRange[0].endDate, 'dd/MM/yyyy'),
+        adults: guests.adults,
+        children: guests.children,
+        rooms: guests.rooms
+      });
+
+      // Chuyển hướng đến trang danh sách
+      navigate({
+        pathname: '/hotels',
+        search: searchParams.toString()
+      });
+    } catch (error) {
+      console.error('Error loading hotels:', error);
+      alert('Có lỗi xảy ra khi tìm kiếm khách sạn');
+    }
+  };
+
+  const handleGuestChange = (type, operation) => {
+    setGuests(prev => ({
+      ...prev,
+      [type]: operation === 'increment' 
+        ? prev[type] + 1 
+        : Math.max(type === 'adults' ? 1 : 0, prev[type] - 1)
+    }));
   };
 
   return (
@@ -37,66 +127,187 @@ export default function Hero() {
         </div>
 
         {/* Search Form */}
-        <div className="w-full max-w-4xl bg-white rounded-lg shadow-xl p-6">
-          <form onSubmit={handleSearch} className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="w-full max-w-6xl bg-white rounded-lg shadow-xl">
+          <div className="flex items-center h-16">
               {/* Destination Input */}
+            <div className="flex-1 h-full border-r border-gray-200">
+              <div className="h-full px-4 flex flex-col justify-center">
               <div className="relative">
-                <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
-                  <FaMapMarkerAlt className="text-gray-400" />
+                  <div className="absolute inset-y-0 left-0 flex items-center pl-2 pointer-events-none">
+                    <FaMapMarkerAlt className="text-blue-500" />
                 </div>
                 <input
                   type="text"
-                  placeholder="Bạn muốn đi đâu?"
-                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  value={searchParams.destination}
-                  onChange={(e) => setSearchParams({...searchParams, destination: e.target.value})}
-                />
+                    placeholder="Thành phố, địa điểm hoặc tên khách sạn"
+                    className="w-full pl-8 pr-4 focus:outline-none text-base"
+                    value={destination}
+                    onChange={(e) => setDestination(e.target.value)}
+                  />
+                </div>
+              </div>
               </div>
 
-              {/* Date Input */}
-              <div className="relative">
-                <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
-                  <FaCalendar className="text-gray-400" />
-                </div>
-                <input
-                  type="text"
-                  placeholder="Chọn ngày"
-                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  value={searchParams.dates}
-                  onChange={(e) => setSearchParams({...searchParams, dates: e.target.value})}
-                />
-              </div>
+                        {/* Date Range */}
+            <div className="flex-1 h-full border-r border-gray-200">
+              <div className="h-full px-4 flex flex-col justify-center">
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 flex items-center pl-2 pointer-events-none">
+                    <FaCalendar className="text-blue-500" />
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setIsDatePickerOpen(!isDatePickerOpen)}
+                    className="w-full pl-8 pr-4 focus:outline-none text-base text-left"
+                  >
+                    {dateRange[0].startDate && dateRange[0].endDate ? (
+                      `${format(dateRange[0].startDate, 'dd/MM/yyyy')} - ${format(dateRange[0].endDate, 'dd/MM/yyyy')}`
+                    ) : (
+                      "Ngày nhận phòng - Ngày trả phòng"
+                    )}
+                  </button>
 
-              {/* Travelers Input */}
-              <div className="relative">
-                <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
-                  <FaUsers className="text-gray-400" />
+                  {/* Date Picker Dropdown */}
+                  {isDatePickerOpen && (
+                    <div className="absolute top-full left-0 mt-2 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
+                      <DateRange
+                        onChange={item => setDateRange([item.selection])}
+                        moveRangeOnFirstSelection={false}
+                        ranges={dateRange}
+                        months={2}
+                        direction="horizontal"
+                        locale={vi}
+                        minDate={new Date()}
+                        rangeColors={["#3b82f6"]}
+                        dateDisplayFormat="dd/MM/yyyy"
+                      />
+                      <div className="p-4 border-t border-gray-200">
+                        <button
+                          type="button"
+                          onClick={() => setIsDatePickerOpen(false)}
+                          className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition duration-200"
+                        >
+                          Xong
+                        </button>
+                      </div>
+                    </div>
+                  )}
                 </div>
-                <select
-                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none"
-                  value={searchParams.travelers}
-                  onChange={(e) => setSearchParams({...searchParams, travelers: e.target.value})}
-                >
-                  <option>1 người</option>
-                  <option>2 người</option>
-                  <option>3 người</option>
-                  <option>4+ người</option>
-                </select>
+              </div>
+            </div>
+
+            {/* Guests & Rooms */}
+            <div className="flex-1 h-full border-r border-gray-200">
+              <div className="h-full px-4 flex flex-col justify-center">
+              <div className="relative">
+                  <div className="absolute inset-y-0 left-0 flex items-center pl-2 pointer-events-none">
+                    <FaUsers className="text-blue-500" />
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setIsGuestDropdownOpen(!isGuestDropdownOpen)}
+                    className="w-full pl-8 pr-4 text-left focus:outline-none text-base"
+                  >
+                    {guests.adults} người lớn, {guests.children} trẻ em, {guests.rooms} phòng
+                  </button>
+
+                  {/* Guests Dropdown */}
+                  {isGuestDropdownOpen && (
+                    <div className="absolute top-full left-0 mt-2 w-[300px] bg-white border border-gray-200 rounded-lg shadow-lg z-50 p-4">
+                      {/* Adults */}
+                      <div className="flex items-center justify-between mb-4">
+                        <span className="text-sm">Người lớn</span>
+                        <div className="flex items-center gap-3">
+                          <button
+                            type="button"
+                            onClick={() => handleGuestChange('adults', 'decrement')}
+                            className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-100"
+                          >
+                            -
+                          </button>
+                          <span className="w-8 text-center">{guests.adults}</span>
+                          <button
+                            type="button"
+                            onClick={() => handleGuestChange('adults', 'increment')}
+                            className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-100"
+                          >
+                            +
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* Children */}
+                      <div className="flex items-center justify-between mb-4">
+                        <span className="text-sm">Trẻ em</span>
+                        <div className="flex items-center gap-3">
+                          <button
+                            type="button"
+                            onClick={() => handleGuestChange('children', 'decrement')}
+                            className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-100"
+                          >
+                            -
+                          </button>
+                          <span className="w-8 text-center">{guests.children}</span>
+                          <button
+                            type="button"
+                            onClick={() => handleGuestChange('children', 'increment')}
+                            className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-100"
+                          >
+                            +
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* Rooms */}
+                      <div className="flex items-center justify-between mb-4">
+                        <span className="text-sm">Phòng</span>
+                        <div className="flex items-center gap-3">
+                          <button
+                            type="button"
+                            onClick={() => handleGuestChange('rooms', 'decrement')}
+                            className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-100"
+                          >
+                            -
+                          </button>
+                          <span className="w-8 text-center">{guests.rooms}</span>
+                          <button
+                            type="button"
+                            onClick={() => handleGuestChange('rooms', 'increment')}
+                            className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-100"
+                          >
+                            +
+                          </button>
+                        </div>
+                </div>
+
+                      {/* Done Button */}
+                      <button
+                        type="button"
+                        onClick={() => setIsGuestDropdownOpen(false)}
+                        className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition duration-200"
+                      >
+                        Xong
+                      </button>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
 
             {/* Search Button */}
+            <div className="px-4">
             <button
               type="submit"
-              className="w-full md:w-auto px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition duration-200 flex items-center justify-center gap-2"
+                className="bg-orange-400 hover:bg-orange-500 text-white font-medium h-10 px-6 rounded-lg transition duration-200 flex items-center justify-center gap-2"
+                onClick={handleSearch}
             >
               <FaSearch />
-              <span>Tìm Kiếm</span>
+                <span className="hidden md:inline">Tìm kiếm</span>
             </button>
-          </form>
+            </div>
+          </div>
         </div>
       </div>
     </div>
   );
 }
+

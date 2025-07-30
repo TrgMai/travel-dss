@@ -115,7 +115,7 @@ export default function Footer() {
             Địa chỉ: Tầng 1, Tòa nhà Amazing, 123 Đường ABC, Quận XYZ, TP.HCM
           </p>
           <p className='text-white text-center'>
-            © 2024 AmazingTour. Bản quyền thuộc về Công ty TNHH AmazingTour Việt Nam.
+            Dữ liệu được thu thập từ ivivu.com và chỉ được sử dụng cho mục đích học tập và nghiên cứu.
           </p>
         </div>
       </div>
