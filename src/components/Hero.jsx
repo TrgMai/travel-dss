@@ -1,115 +1,82 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaSearch, FaMapMarkerAlt, FaCalendar, FaUsers } from "react-icons/fa";
-import { DateRange } from 'react-date-range';
-import { format } from 'date-fns';
-import 'react-date-range/dist/styles.css';
-import 'react-date-range/dist/theme/default.css';
-import vi from 'date-fns/locale/vi';
-
+import { DateRange } from "react-date-range";
+import { format } from "date-fns";
+import "react-date-range/dist/styles.css";
+import "react-date-range/dist/theme/default.css";
+import vi from "date-fns/locale/vi";
+import { useHotels } from "../hooks/useHotels";
+import { hotelAPI } from "../services/api";
 export default function Hero() {
   const navigate = useNavigate();
   const [destination, setDestination] = useState("");
   const [dateRange, setDateRange] = useState([
     {
       startDate: new Date(),
-      endDate: new Date(),
-      key: 'selection'
-    }
+      endDate: new Date(new Date().getTime() + 24 * 60 * 60 * 1000),
+      key: "selection",
+    },
   ]);
   const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
   const [isGuestDropdownOpen, setIsGuestDropdownOpen] = useState(false);
   const [guests, setGuests] = useState({
     adults: 1,
     children: 0,
-    rooms: 1
+    rooms: 1,
   });
+  const { getHotels } = useHotels();
 
   const handleSearch = async (e) => {
     e.preventDefault();
     if (!destination) return;
-    
+
     try {
-      // Chuẩn hóa tên địa điểm người dùng nhập
-      const searchKey = destination.toLowerCase()
-        .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, "")
-        .replace(/đ/g, "d")
-        .trim()
-        .replace(/\s+/g, "-");
+      const response = await getHotels(destination);
+      const hotels =
+        Array.isArray(response?.byDestination?.hotels) &&
+        response?.byDestination?.hotels.length > 0
+          ? response?.byDestination?.hotels
+          : Array.isArray(response?.byName?.results) &&
+            response?.byName?.results.length > 0
+          ? response?.byName?.results
+          : [];
 
-      // Danh sách các địa điểm và file tương ứng
-      const destinationMap = {
-        'da-nang': 'da-nang',
-        'danang': 'da-nang',
-        'đà-nẵng': 'da-nang',
-        'da-lat': 'da-lat',
-        'dalat': 'da-lat',
-        'đà-lạt': 'da-lat',
-        'nha-trang': 'nha-trang',
-        'nhatrang': 'nha-trang',
-        'phu-quoc': 'phu-quoc',
-        'phuquoc': 'phu-quoc',
-        'phú-quốc': 'phu-quoc',
-        'phan-thiet': 'phan-thiet',
-        'phanthiet': 'phan-thiet',
-        'phan-thiết': 'phan-thiet',
-        'quy-nhon': 'quy-nhon',
-        'quynhon': 'quy-nhon',
-        'quy-nhơn': 'quy-nhon',
-        'vung-tau': 'vung-tau',
-        'vungtau': 'vung-tau',
-        'vũng-tàu': 'vung-tau',
-        'phu-yen': 'phu-yen',
-        'phuyen': 'phu-yen',
-        'phú-yên': 'phu-yen'
-      };
-
-      // Tìm file tương ứng với địa điểm
-      const fileName = destinationMap[searchKey];
-      
-      if (!fileName) {
-        alert('Không tìm thấy khách sạn tại địa điểm này');
-        return;
-      }
-
-      // Tạo search params với đầy đủ thông tin
-      const searchParams = new URLSearchParams({
-        destination: searchKey,
-        checkIn: format(dateRange[0].startDate, 'dd/MM/yyyy'),
-        checkOut: format(dateRange[0].endDate, 'dd/MM/yyyy'),
-        adults: guests.adults,
-        children: guests.children,
-        rooms: guests.rooms
+      navigate("/hotels", {
+        state: {
+          destination,
+          dateRange,
+          guests,
+          hotels: hotels,
+          matchedRegion:
+            response?.byDestination?.matched_region ||
+            response?.byName?.matched_region,
+          count: response?.byDestination?.count || response?.byName?.count,
+        },
       });
-
-      // Chuyển hướng đến trang danh sách
-      navigate({
-        pathname: '/hotels',
-        search: searchParams.toString()
-      });
-    } catch (error) {
-      console.error('Error loading hotels:', error);
-      alert('Có lỗi xảy ra khi tìm kiếm khách sạn');
+    } catch (err) {
+      console.error("Lỗi khi tìm khách sạn:", err);
+      alert("Có lỗi xảy ra khi tìm kiếm khách sạn");
     }
   };
 
   const handleGuestChange = (type, operation) => {
-    setGuests(prev => ({
+    setGuests((prev) => ({
       ...prev,
-      [type]: operation === 'increment' 
-        ? prev[type] + 1 
-        : Math.max(type === 'adults' ? 1 : 0, prev[type] - 1)
+      [type]:
+        operation === "increment"
+          ? prev[type] + 1
+          : Math.max(type === "adults" ? 1 : 0, prev[type] - 1),
     }));
   };
 
   return (
     <div className="relative">
       {/* Hero Background */}
-      <div 
+      <div
         className="h-[600px] bg-cover bg-no-repeat bg-center relative w-full"
         style={{
-          backgroundImage: "url('/background.jpg')"
+          backgroundImage: "url('/background.jpg')",
         }}
       >
         <div className="absolute inset-0 bg-black/40" />
@@ -129,25 +96,31 @@ export default function Hero() {
         {/* Search Form */}
         <div className="w-full max-w-6xl bg-white rounded-lg shadow-xl">
           <div className="flex items-center h-16">
-              {/* Destination Input */}
+            {/* Destination Input */}
             <div className="flex-1 h-full border-r border-gray-200">
               <div className="h-full px-4 flex flex-col justify-center">
-              <div className="relative">
+                <div className="relative">
                   <div className="absolute inset-y-0 left-0 flex items-center pl-2 pointer-events-none">
                     <FaMapMarkerAlt className="text-blue-500" />
-                </div>
-                <input
-                  type="text"
+                  </div>
+                  <input
+                    type="text"
                     placeholder="Thành phố, địa điểm hoặc tên khách sạn"
                     className="w-full pl-8 pr-4 focus:outline-none text-base"
                     value={destination}
                     onChange={(e) => setDestination(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        e.preventDefault();
+                        handleSearch(e);
+                      }
+                    }}
                   />
                 </div>
               </div>
-              </div>
+            </div>
 
-                        {/* Date Range */}
+            {/* Date Range */}
             <div className="flex-1 h-full border-r border-gray-200">
               <div className="h-full px-4 flex flex-col justify-center">
                 <div className="relative">
@@ -159,24 +132,28 @@ export default function Hero() {
                     onClick={() => setIsDatePickerOpen(!isDatePickerOpen)}
                     className="w-full pl-8 pr-4 focus:outline-none text-base text-left"
                   >
-                    {dateRange[0].startDate && dateRange[0].endDate ? (
-                      `${format(dateRange[0].startDate, 'dd/MM/yyyy')} - ${format(dateRange[0].endDate, 'dd/MM/yyyy')}`
-                    ) : (
-                      "Ngày nhận phòng - Ngày trả phòng"
-                    )}
+                    {dateRange[0].startDate && dateRange[0].endDate
+                      ? `${format(
+                          dateRange[0].startDate,
+                          "dd/MM/yyyy"
+                        )} - ${format(dateRange[0].endDate, "dd/MM/yyyy")}`
+                      : "Ngày nhận phòng - Ngày trả phòng"}
                   </button>
 
                   {/* Date Picker Dropdown */}
                   {isDatePickerOpen && (
                     <div className="absolute top-full left-0 mt-2 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
                       <DateRange
-                        onChange={item => setDateRange([item.selection])}
+                        onChange={(item) => setDateRange([item.selection])}
                         moveRangeOnFirstSelection={false}
                         ranges={dateRange}
                         months={2}
                         direction="horizontal"
                         locale={vi}
                         minDate={new Date()}
+                        maxDate={
+                          new Date(new Date().setDate(new Date().getDate() + 1))
+                        }
                         rangeColors={["#3b82f6"]}
                         dateDisplayFormat="dd/MM/yyyy"
                       />
@@ -198,7 +175,7 @@ export default function Hero() {
             {/* Guests & Rooms */}
             <div className="flex-1 h-full border-r border-gray-200">
               <div className="h-full px-4 flex flex-col justify-center">
-              <div className="relative">
+                <div className="relative">
                   <div className="absolute inset-y-0 left-0 flex items-center pl-2 pointer-events-none">
                     <FaUsers className="text-blue-500" />
                   </div>
@@ -207,7 +184,8 @@ export default function Hero() {
                     onClick={() => setIsGuestDropdownOpen(!isGuestDropdownOpen)}
                     className="w-full pl-8 pr-4 text-left focus:outline-none text-base"
                   >
-                    {guests.adults} người lớn, {guests.children} trẻ em, {guests.rooms} phòng
+                    {guests.adults} người lớn, {guests.children} trẻ em,{" "}
+                    {guests.rooms} phòng
                   </button>
 
                   {/* Guests Dropdown */}
@@ -219,15 +197,21 @@ export default function Hero() {
                         <div className="flex items-center gap-3">
                           <button
                             type="button"
-                            onClick={() => handleGuestChange('adults', 'decrement')}
+                            onClick={() =>
+                              handleGuestChange("adults", "decrement")
+                            }
                             className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-100"
                           >
                             -
                           </button>
-                          <span className="w-8 text-center">{guests.adults}</span>
+                          <span className="w-8 text-center">
+                            {guests.adults}
+                          </span>
                           <button
                             type="button"
-                            onClick={() => handleGuestChange('adults', 'increment')}
+                            onClick={() =>
+                              handleGuestChange("adults", "increment")
+                            }
                             className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-100"
                           >
                             +
@@ -241,15 +225,21 @@ export default function Hero() {
                         <div className="flex items-center gap-3">
                           <button
                             type="button"
-                            onClick={() => handleGuestChange('children', 'decrement')}
+                            onClick={() =>
+                              handleGuestChange("children", "decrement")
+                            }
                             className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-100"
                           >
                             -
                           </button>
-                          <span className="w-8 text-center">{guests.children}</span>
+                          <span className="w-8 text-center">
+                            {guests.children}
+                          </span>
                           <button
                             type="button"
-                            onClick={() => handleGuestChange('children', 'increment')}
+                            onClick={() =>
+                              handleGuestChange("children", "increment")
+                            }
                             className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-100"
                           >
                             +
@@ -263,21 +253,27 @@ export default function Hero() {
                         <div className="flex items-center gap-3">
                           <button
                             type="button"
-                            onClick={() => handleGuestChange('rooms', 'decrement')}
+                            onClick={() =>
+                              handleGuestChange("rooms", "decrement")
+                            }
                             className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-100"
                           >
                             -
                           </button>
-                          <span className="w-8 text-center">{guests.rooms}</span>
+                          <span className="w-8 text-center">
+                            {guests.rooms}
+                          </span>
                           <button
                             type="button"
-                            onClick={() => handleGuestChange('rooms', 'increment')}
+                            onClick={() =>
+                              handleGuestChange("rooms", "increment")
+                            }
                             className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-100"
                           >
                             +
                           </button>
                         </div>
-                </div>
+                      </div>
 
                       {/* Done Button */}
                       <button
@@ -295,14 +291,14 @@ export default function Hero() {
 
             {/* Search Button */}
             <div className="px-4">
-            <button
-              type="submit"
+              <button
+                type="submit"
                 className="bg-orange-400 hover:bg-orange-500 text-white font-medium h-10 px-6 rounded-lg transition duration-200 flex items-center justify-center gap-2"
                 onClick={handleSearch}
-            >
-              <FaSearch />
+              >
+                <FaSearch />
                 <span className="hidden md:inline">Tìm kiếm</span>
-            </button>
+              </button>
             </div>
           </div>
         </div>
@@ -310,4 +306,3 @@ export default function Hero() {
     </div>
   );
 }
-

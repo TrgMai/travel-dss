@@ -87,9 +87,8 @@ export default function RecommendPhase2() {
     navigate("/recommend/phase3");
   };
 
-  // Tạo giới hạn chọn ngày trong tháng 6 và 7/2024
-  const minDate = "2024-06-01";
-  const maxDate = "2024-07-31";
+  const minDate = "2025-06-01";
+  const maxDate = "2025-08-31";
 
   const isFormValid = formData.startDate && 
                      formData.endDate && 
@@ -153,11 +152,9 @@ export default function RecommendPhase2() {
             className={commonStyles.select}
           >
             <option value="">-- Chọn địa điểm --</option>
-            <option value="beach">Biển</option>
-            <option value="mountain">Núi</option>
-            <option value="city">Thành phố</option>
-            <option value="countryside">Miền quê</option>
-            <option value="multi">Tour kết hợp (3 điểm)</option>
+            <option value="biển">Biển</option>
+            <option value="núi">Núi</option>
+            <option value="thành phố">Thành phố</option>
           </select>
         </div>
 

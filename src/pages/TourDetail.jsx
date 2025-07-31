@@ -1,101 +1,92 @@
 import { useState, useEffect } from "react";
-import { useParams, Link, useNavigate } from "react-router-dom";
-import { FaStar, FaMapMarkerAlt, FaClock, FaRegCalendarAlt, FaCheck } from "react-icons/fa";
-import { tours } from "../data/tours";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
+import { FaMapMarkerAlt, FaClock } from "react-icons/fa";
 import { commonStyles } from "../styles/common";
+import { tourAPI } from "../services/api";
 
 export default function TourDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
   const [tour, setTour] = useState(null);
 
   useEffect(() => {
-    // Tìm tour theo id
-    const foundTour = Object.values(tours)
-      .flat()
-      .find(t => t.id === id);
+    const fetchTourData = async () => {
+      try {
+        // Nếu có data từ navigation state thì dùng
+        if (location.state?.tourData) {
+          setTour(location.state.tourData);
+          return;
+        }
 
-    if (!foundTour) {
-      navigate('/');
-      return;
-    }
+        // Nếu không có data từ navigation, gọi API
+        const response = await tourAPI.postBuildSchedule({
+          tour_id: id,
+          location: location,
+        });
+        setTour(response);
+      } catch (error) {
+        console.error("Error fetching tour details:", error);
+        navigate("/");
+      }
+    };
 
-    setTour(foundTour);
-  }, [id, navigate]);
+    fetchTourData();
+  }, [id, navigate, location.state]);
 
   if (!tour) return null;
-
-  const formatPrice = (price) => {
-    return new Intl.NumberFormat('vi-VN', {
-      style: 'currency',
-      currency: 'VND'
-    }).format(price);
-  };
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-8">
       {/* Hero Section */}
       <div className="relative h-[400px] rounded-xl overflow-hidden mb-8">
         <img
-          src={tour.image}
-          alt={tour.title}
+          src={tour?.tour?.gallery?.[4] || "/tour-placeholder.jpg"}
+          alt={tour?.tour?.name}
           className="w-full h-full object-cover"
         />
         <div className="absolute inset-0 bg-black/40 flex items-end">
           <div className="p-8 text-white">
             <h1 className="text-3xl md:text-4xl font-bold mb-4">
-              {tour.title}
+              {tour?.tour?.name}
             </h1>
             <div className="flex items-center gap-6">
               <div className="flex items-center gap-2">
                 <FaMapMarkerAlt />
-                <span>{tour.location}</span>
+                <span>Nha Trang - Đà Lạt</span>
               </div>
               <div className="flex items-center gap-2">
                 <FaClock />
-                <span>{tour.duration}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <FaStar className="text-yellow-400" />
-                <span>{tour.rating}</span>
-                <span className="text-sm">({tour.reviews} đánh giá)</span>
+                <span>4 ngày 3 đêm</span>
               </div>
             </div>
           </div>
         </div>
       </div>
 
+      {/* Gallery */}
+      <div className="grid grid-cols-4 gap-4 mb-8">
+        {tour?.tour?.gallery?.slice(2, 10).map((image, index) => (
+          <img
+            key={index}
+            src={image}
+            alt={`Tour image ${index + 1}`}
+            className="w-full h-48 object-cover rounded-lg hover:opacity-90 transition-opacity cursor-pointer"
+          />
+        ))}
+      </div>
+
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Main Content */}
         <div className="lg:col-span-2 space-y-8">
-          {/* Description */}
+          {/* Overview */}
           <div className={commonStyles.card}>
             <h2 className="text-xl font-bold text-gray-800 mb-4">
-              Giới thiệu tour
+              Tổng quan tour
             </h2>
-            <p className="text-gray-600">
-              {tour.description}
+            <p className="text-gray-600 whitespace-pre-line">
+              {tour?.tour?.overview}
             </p>
-          </div>
-
-          {/* Highlights */}
-          <div className={commonStyles.card}>
-            <h2 className="text-xl font-bold text-gray-800 mb-4">
-              Điểm nhấn hành trình
-            </h2>
-            <div className="grid grid-cols-2 gap-4">
-              {tour.highlights.map((highlight, index) => (
-                <div
-                  key={index}
-                  className="flex items-center gap-2 text-gray-600"
-                >
-                  <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
-                    <FaCheck className="text-blue-600" />
-                  </div>
-                  <span>{highlight}</span>
-                </div>
-              ))}
-            </div>
           </div>
 
           {/* Schedule */}
@@ -103,40 +94,15 @@ export default function TourDetail() {
             <h2 className="text-xl font-bold text-gray-800 mb-4">
               Lịch trình tour
             </h2>
-            <div className="space-y-6">
-              {tour.schedule.map((day, index) => (
-                <div key={index}>
-                  <h3 className="font-semibold text-gray-800 mb-2">
-                    {day.day}
+            <div className="space-y-8">
+              {tour?.schedule?.map((day, index) => (
+                <div key={index} className="border-l-4 border-blue-500 pl-4">
+                  <h3 className="font-bold text-gray-800 mb-3 text-lg">
+                    {day.day.split("\n")[0]}
                   </h3>
-                  <ul className="space-y-2 pl-6">
-                    {day.activities.map((activity, actIndex) => (
-                      <li
-                        key={actIndex}
-                        className="text-gray-600 list-disc"
-                      >
-                        {activity}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Includes */}
-          <div className={commonStyles.card}>
-            <h2 className="text-xl font-bold text-gray-800 mb-4">
-              Dịch vụ bao gồm
-            </h2>
-            <div className="grid grid-cols-2 gap-4">
-              {tour.includes.map((item, index) => (
-                <div
-                  key={index}
-                  className="flex items-center gap-2 text-gray-600"
-                >
-                  <FaCheck className="text-green-500" />
-                  <span>{item}</span>
+                  <div className="text-gray-600 whitespace-pre-line">
+                    {day.detail}
+                  </div>
                 </div>
               ))}
             </div>
@@ -149,15 +115,21 @@ export default function TourDetail() {
           <div className={commonStyles.card}>
             <div className="text-center">
               <p className="text-gray-600">Giá chỉ từ</p>
-              <p className="text-3xl font-bold text-blue-600 my-2">
-                {formatPrice(tour.price)}
-              </p>
-              <p className="text-sm text-gray-500 mb-6">
-                /người
-              </p>
-              <button className={`${commonStyles.button} w-full`}>
+              <div className="flex items-center justify-center gap-1 my-2">
+                <p className="text-3xl font-bold text-blue-600">
+                  {tour?.tour?.price?.replace("x ", "")}
+                </p>
+                <span className="text-gray-500">VNĐ</span>
+              </div>
+              <p className="text-sm text-gray-500 mb-6">/người</p>
+              <a
+                href={`https://www.ivivu.com${tour?.tour?.url}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`${commonStyles.button} w-full block text-center`}
+              >
                 Đặt tour ngay
-              </button>
+              </a>
             </div>
           </div>
 
@@ -169,14 +141,22 @@ export default function TourDetail() {
             <div className="space-y-4">
               <p className="text-gray-600">
                 Gọi ngay hotline:
-                <a href="tel:1900123456" className="text-blue-600 font-semibold block">
+                <a
+                  href="tel:1900123456"
+                  className="text-blue-600 font-semibold block"
+                >
                   1900 123 456
                 </a>
               </p>
               <p className="text-gray-600">
-                Hoặc email:
-                <a href="mailto:support@amazingtour.vn" className="text-blue-600 font-semibold block">
-                  support@amazingtour.vn
+                Hoặc truy cập:
+                <a
+                  href={`https://www.ivivu.com${tour?.tour?.url}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-600 font-semibold block truncate"
+                >
+                  {`https://www.ivivu.com${tour?.tour?.url}`}
                 </a>
               </p>
             </div>
@@ -185,4 +165,4 @@ export default function TourDetail() {
       </div>
     </div>
   );
-} 
+}

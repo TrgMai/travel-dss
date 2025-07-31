@@ -20,7 +20,7 @@ export default function App() {
         <Route path="/recommend/phase2" element={<RecommendPhase2 />} />
         <Route path="/recommend/phase3" element={<RecommendPhase3 />} />
         <Route path="/recommend/result" element={<RecommendResult />} />
-        <Route path="/tours" element={<TourList />} />
+        <Route path="/recommend/tour-list" element={<TourList />} />
         <Route path="/tour/:id" element={<TourDetail />} />
         <Route path="/hotels" element={<HotelList />} />
       </Routes>
