@@ -25,7 +25,7 @@ export default function Header() {
         isScrolled ? "" : "border-b border-white/10"
       }`}>
         <div className={`text-2xl font-bold flex items-center bg-transparent ${
-          isScrolled ? "text-blue-600" : "text-white"
+          isScrolled ? "text-[#06b6d4]" : "text-white"
         }`}>
           <img src="/logo.png" alt="AmazingTour Logo" className="inline-block h-14 mr-2 rounded-full" />
           AmazingTour
@@ -44,10 +44,10 @@ export default function Header() {
             isScrolled ? "text-gray-700" : "text-white"
           }`}>Hỗ trợ</a>
         </nav>
-        <button className={`px-4 py-2 rounded transition-colors ${
+        <button className={`px-4 py-2 rounded transition-colors font-semibold ${
           isScrolled 
-            ? "bg-blue-600 text-white hover:bg-blue-700" 
-            : "bg-white text-blue-600 hover:bg-blue-50"
+            ? "bg-[#06b6d4] text-white hover:bg-cyan-600" 
+            : "bg-white text-[#06b6d4] hover:bg-blue-50"
         }`}>
           Đặt ngay
         </button>

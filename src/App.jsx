@@ -8,6 +8,7 @@ import RecommendPhase3 from "./pages/RecommendPhase3";
 import RecommendResult from "./pages/RecommendResult";
 import TourList from "./pages/TourList";
 import TourDetail from "./pages/TourDetail";
+import HotelList from "./pages/HotelList";
 
 export default function App() {
   return (
@@ -19,8 +20,9 @@ export default function App() {
         <Route path="/recommend/phase2" element={<RecommendPhase2 />} />
         <Route path="/recommend/phase3" element={<RecommendPhase3 />} />
         <Route path="/recommend/result" element={<RecommendResult />} />
-        <Route path="/tours" element={<TourList />} />
+        <Route path="/recommend/tour-list" element={<TourList />} />
         <Route path="/tour/:id" element={<TourDetail />} />
+        <Route path="/hotels" element={<HotelList />} />
       </Routes>
     </BrowserRouter>
   );
