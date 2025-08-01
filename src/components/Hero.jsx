@@ -11,6 +11,7 @@ import { hotelAPI } from "../services/api";
 export default function Hero() {
   const navigate = useNavigate();
   const [destination, setDestination] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const [dateRange, setDateRange] = useState([
     {
       startDate: new Date(),
@@ -32,6 +33,7 @@ export default function Hero() {
     if (!destination) return;
 
     try {
+      setIsLoading(true);
       const response = await getHotels(destination);
       const hotels =
         Array.isArray(response?.byDestination?.hotels) &&
@@ -57,6 +59,8 @@ export default function Hero() {
     } catch (err) {
       console.error("Lỗi khi tìm khách sạn:", err);
       alert("Có lỗi xảy ra khi tìm kiếm khách sạn");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -293,11 +297,27 @@ export default function Hero() {
             <div className="px-4">
               <button
                 type="submit"
-                className="bg-orange-400 hover:bg-orange-500 text-white font-medium h-10 px-6 rounded-lg transition duration-200 flex items-center justify-center gap-2"
+                disabled={isLoading}
+                className={`text-white font-medium h-10 px-6 rounded-lg transition-all duration-200 flex items-center justify-center gap-2 ${
+                  isLoading
+                    ? "bg-orange-300 cursor-not-allowed"
+                    : "bg-orange-400 hover:bg-orange-500"
+                }`}
                 onClick={handleSearch}
               >
-                <FaSearch />
-                <span className="hidden md:inline">Tìm kiếm</span>
+                {isLoading ? (
+                  <>
+                    <div className="animate-spin w-5 h-5">
+                      <div className="h-full w-full border-4 border-l-white border-r-white border-b-white border-t-transparent rounded-full" />
+                    </div>
+                    <span className="hidden md:inline">Đang tìm...</span>
+                  </>
+                ) : (
+                  <>
+                    <FaSearch />
+                    <span className="hidden md:inline">Tìm kiếm</span>
+                  </>
+                )}
               </button>
             </div>
           </div>

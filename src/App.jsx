@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import Detail from "./pages/Detail";
@@ -9,21 +9,29 @@ import RecommendResult from "./pages/RecommendResult";
 import TourList from "./pages/TourList";
 import TourDetail from "./pages/TourDetail";
 import HotelList from "./pages/HotelList";
+import ApiCheckPopup from "./components/ApiCheckPopup";
 
 export default function App() {
+  const [isApiReady, setIsApiReady] = useState(false);
+
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/place/:id" element={<Detail />} />
-        <Route path="/recommend/phase1" element={<RecommendPhase1 />} />
-        <Route path="/recommend/phase2" element={<RecommendPhase2 />} />
-        <Route path="/recommend/phase3" element={<RecommendPhase3 />} />
-        <Route path="/recommend/result" element={<RecommendResult />} />
-        <Route path="/recommend/tour-list" element={<TourList />} />
-        <Route path="/tour/:id" element={<TourDetail />} />
-        <Route path="/hotels" element={<HotelList />} />
-      </Routes>
-    </BrowserRouter>
+    <>
+      <ApiCheckPopup onSuccess={() => setIsApiReady(true)} />
+      {isApiReady && (
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/place/:id" element={<Detail />} />
+            <Route path="/recommend/phase1" element={<RecommendPhase1 />} />
+            <Route path="/recommend/phase2" element={<RecommendPhase2 />} />
+            <Route path="/recommend/phase3" element={<RecommendPhase3 />} />
+            <Route path="/recommend/result" element={<RecommendResult />} />
+            <Route path="/recommend/tour-list" element={<TourList />} />
+            <Route path="/tour/:id" element={<TourDetail />} />
+            <Route path="/hotels" element={<HotelList />} />
+          </Routes>
+        </BrowserRouter>
+      )}
+    </>
   );
 }
