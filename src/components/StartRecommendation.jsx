@@ -1,11 +1,9 @@
-// src/components/StartRecommendation.jsx
 import { useNavigate } from "react-router-dom";
 
 export default function StartRecommendation() {
   const navigate = useNavigate();
 
   const handleStart = () => {
-    // chuyển sang trang giai đoạn 1 (bạn tạo route /recommend/phase1)
     navigate("/recommend/phase1");
   };
 
@@ -15,7 +13,8 @@ export default function StartRecommendation() {
         Hệ thống gợi ý du lịch thông minh
       </h2>
       <p className="text-gray-600 mb-6">
-        Bạn chưa biết có nên đi du lịch hay không? Hãy bắt đầu với trợ lý đề xuất!
+        Bạn chưa biết có nên đi du lịch hay không? Hãy bắt đầu với trợ lý đề
+        xuất!
       </p>
       <button
         onClick={handleStart}

@@ -10,7 +10,7 @@ const TourCard = ({ tour }) => {
   const tourId = tour.link.split("/").pop();
 
   const matchLocation = tour.link.match(/tour-([a-z\-]+?)(-|\/)/i);
-  const location = matchLocation ? matchLocation[1] : null; // 'nha-trang'
+  const location = matchLocation ? matchLocation[1] : null;
 
   const handleViewDetail = async (e) => {
     e.preventDefault();

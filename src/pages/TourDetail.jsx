@@ -13,13 +13,11 @@ export default function TourDetail() {
   useEffect(() => {
     const fetchTourData = async () => {
       try {
-        // Nếu có data từ navigation state thì dùng
         if (location.state?.tourData) {
           setTour(location.state.tourData);
           return;
         }
 
-        // Nếu không có data từ navigation, gọi API
         const response = await tourAPI.postBuildSchedule({
           tour_id: id,
           location: location,

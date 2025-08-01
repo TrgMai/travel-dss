@@ -5,53 +5,51 @@ import { commonStyles } from "../styles/common";
 export default function RecommendPhase3() {
   const [formData, setFormData] = useState({
     interests: [],
-    budget: 6000000
+    budget: 6000000,
   });
 
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Kiểm tra data từ các phase trước
-    const phase1Data = JSON.parse(localStorage.getItem('phase1Data') || '{}');
-    const phase2Data = JSON.parse(localStorage.getItem('phase2Data') || '{}');
+    const phase1Data = JSON.parse(localStorage.getItem("phase1Data") || "{}");
+    const phase2Data = JSON.parse(localStorage.getItem("phase2Data") || "{}");
     if (!phase1Data.groupType || !phase2Data.location) {
-      navigate('/recommend/phase1');
+      navigate("/recommend/phase1");
     }
   }, [navigate]);
 
   const interestOptions = [
-    { id: 'nature', label: 'Khám phá thiên nhiên' },
-    { id: 'culture', label: 'Văn hóa địa phương' },
-    { id: 'food', label: 'Ẩm thực' },
-    { id: 'adventure', label: 'Phiêu lưu mạo hiểm' },
-    { id: 'relaxation', label: 'Nghỉ dưỡng' },
-    { id: 'photography', label: 'Chụp ảnh' },
+    { id: "nature", label: "Khám phá thiên nhiên" },
+    { id: "culture", label: "Văn hóa địa phương" },
+    { id: "food", label: "Ẩm thực" },
+    { id: "adventure", label: "Phiêu lưu mạo hiểm" },
+    { id: "relaxation", label: "Nghỉ dưỡng" },
+    { id: "photography", label: "Chụp ảnh" },
   ];
 
   const handleInterestToggle = (interestId) => {
-    setFormData(prev => {
+    setFormData((prev) => {
       const newInterests = prev.interests.includes(interestId)
-        ? prev.interests.filter(id => id !== interestId)
+        ? prev.interests.filter((id) => id !== interestId)
         : [...prev.interests, interestId];
       return { ...prev, interests: newInterests };
     });
   };
 
   const handleBudgetChange = (e) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      budget: parseInt(e.target.value)
+      budget: parseInt(e.target.value),
     }));
   };
 
   const formatBudget = (value) => {
-    return new Intl.NumberFormat('vi-VN', {
-      style: 'currency',
-      currency: 'VND'
+    return new Intl.NumberFormat("vi-VN", {
+      style: "currency",
+      currency: "VND",
     }).format(value);
   };
 
-  // Tính phần trăm của giá trị hiện tại
   const calculatePercentage = () => {
     const min = 1000000;
     const max = 10000000;
@@ -59,7 +57,7 @@ export default function RecommendPhase3() {
   };
 
   const handleNext = () => {
-    localStorage.setItem('phase3Data', JSON.stringify(formData));
+    localStorage.setItem("phase3Data", JSON.stringify(formData));
     navigate("/recommend/result");
   };
 
@@ -69,12 +67,13 @@ export default function RecommendPhase3() {
     <div className={commonStyles.container}>
       {/* Progress Bar */}
       <div className={commonStyles.progressBar}>
-        <div className={commonStyles.progressStep} style={{ width: "60%" }}></div>
+        <div
+          className={commonStyles.progressStep}
+          style={{ width: "60%" }}
+        ></div>
       </div>
 
-      <h1 className={commonStyles.title}>
-        Bước 3: Sở thích và Ngân sách
-      </h1>
+      <h1 className={commonStyles.title}>Bước 3: Sở thích và Ngân sách</h1>
 
       <div className={commonStyles.card}>
         <div className={commonStyles.formGroup}>
@@ -82,7 +81,7 @@ export default function RecommendPhase3() {
             Bạn thích làm gì khi đi du lịch? (Chọn ít nhất 1)
           </label>
           <div className="grid grid-cols-2 gap-3">
-            {interestOptions.map(interest => (
+            {interestOptions.map((interest) => (
               <button
                 key={interest.id}
                 type="button"
@@ -125,7 +124,7 @@ export default function RecommendPhase3() {
                 [&::-webkit-slider-thumb]:shadow-lg
                 [&::-webkit-slider-thumb]:hover:scale-110"
               style={{
-                background: `linear-gradient(to right, #2563eb 0%, #2563eb ${calculatePercentage()}%, #e5e7eb ${calculatePercentage()}%, #e5e7eb 100%)`
+                background: `linear-gradient(to right, #2563eb 0%, #2563eb ${calculatePercentage()}%, #e5e7eb ${calculatePercentage()}%, #e5e7eb 100%)`,
               }}
             />
             <div className="flex justify-between mt-2 text-xs text-gray-600">
@@ -143,7 +142,7 @@ export default function RecommendPhase3() {
           onClick={handleNext}
           disabled={!isFormValid}
           className={`${commonStyles.button} ${
-            !isFormValid ? 'opacity-50 cursor-not-allowed' : ''
+            !isFormValid ? "opacity-50 cursor-not-allowed" : ""
           }`}
         >
           Xem kết quả →
@@ -151,4 +150,4 @@ export default function RecommendPhase3() {
       </div>
     </div>
   );
-} 
+}

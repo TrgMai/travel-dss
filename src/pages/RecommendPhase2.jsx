@@ -1,4 +1,4 @@
-// src/pages/RecommendPhase2.jsx
+import { useState } from "react";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { commonStyles } from "../styles/common";
@@ -8,60 +8,59 @@ export default function RecommendPhase2() {
     startDate: "",
     endDate: "",
     location: "",
-    startingPoints: [{ point: "", people: 1 }]
+    startingPoints: [{ point: "", people: 1 }],
   });
 
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Lấy data từ phase 1
-    const phase1Data = JSON.parse(localStorage.getItem('phase1Data') || '{}');
+    const phase1Data = JSON.parse(localStorage.getItem("phase1Data") || "{}");
     if (!phase1Data.groupType) {
-      navigate('/recommend/phase1');
+      navigate("/recommend/phase1");
     }
   }, [navigate]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
   const handleStartingPointChange = (index, field, value) => {
-    setFormData(prev => {
+    setFormData((prev) => {
       const newStartingPoints = [...prev.startingPoints];
       newStartingPoints[index] = {
         ...newStartingPoints[index],
-        [field]: value
+        [field]: value,
       };
       return {
         ...prev,
-        startingPoints: newStartingPoints
+        startingPoints: newStartingPoints,
       };
     });
   };
 
   const addStartingPoint = () => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      startingPoints: [...prev.startingPoints, { point: "", people: 1 }]
+      startingPoints: [...prev.startingPoints, { point: "", people: 1 }],
     }));
   };
 
   const removeStartingPoint = (index) => {
     if (formData.startingPoints.length > 1) {
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
-        startingPoints: prev.startingPoints.filter((_, i) => i !== index)
+        startingPoints: prev.startingPoints.filter((_, i) => i !== index),
       }));
     }
   };
 
   const calculateDuration = () => {
     if (!formData.startDate || !formData.endDate) return null;
-    
+
     const start = new Date(formData.startDate);
     const end = new Date(formData.endDate);
     const days = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
@@ -70,7 +69,10 @@ export default function RecommendPhase2() {
   };
 
   const getTotalPeople = () => {
-    return formData.startingPoints.reduce((sum, point) => sum + Number(point.people), 0);
+    return formData.startingPoints.reduce(
+      (sum, point) => sum + Number(point.people),
+      0
+    );
   };
 
   const handleNext = () => {
@@ -80,33 +82,35 @@ export default function RecommendPhase2() {
     const dataToSave = {
       ...formData,
       duration,
-      totalPeople: getTotalPeople()
+      totalPeople: getTotalPeople(),
     };
-    
-    localStorage.setItem('phase2Data', JSON.stringify(dataToSave));
+
+    localStorage.setItem("phase2Data", JSON.stringify(dataToSave));
     navigate("/recommend/phase3");
   };
 
   const minDate = "2025-06-01";
   const maxDate = "2025-08-31";
 
-  const isFormValid = formData.startDate && 
-                     formData.endDate && 
-                     formData.location && 
-                     new Date(formData.endDate) > new Date(formData.startDate) &&
-                     formData.startingPoints.every(sp => sp.point && sp.people > 0) &&
-                     getTotalPeople() > 0;
+  const isFormValid =
+    formData.startDate &&
+    formData.endDate &&
+    formData.location &&
+    new Date(formData.endDate) > new Date(formData.startDate) &&
+    formData.startingPoints.every((sp) => sp.point && sp.people > 0) &&
+    getTotalPeople() > 0;
 
   return (
     <div className={commonStyles.container}>
       {/* Progress Bar */}
       <div className={commonStyles.progressBar}>
-        <div className={commonStyles.progressStep} style={{ width: "40%" }}></div>
+        <div
+          className={commonStyles.progressStep}
+          style={{ width: "40%" }}
+        ></div>
       </div>
 
-      <h1 className={commonStyles.title}>
-        Bước 2: Thời gian và địa điểm
-      </h1>
+      <h1 className={commonStyles.title}>Bước 2: Thời gian và địa điểm</h1>
 
       <div className={commonStyles.card}>
         <div className={commonStyles.formGroup}>
@@ -166,8 +170,17 @@ export default function RecommendPhase2() {
               onClick={addStartingPoint}
               className="text-blue-600 hover:text-blue-700 font-medium text-sm flex items-center gap-1"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clipRule="evenodd" />
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-5 w-5"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z"
+                  clipRule="evenodd"
+                />
               </svg>
               Thêm điểm khởi hành
             </button>
@@ -179,7 +192,9 @@ export default function RecommendPhase2() {
                 <div className="flex-grow">
                   <select
                     value={sp.point}
-                    onChange={(e) => handleStartingPointChange(index, 'point', e.target.value)}
+                    onChange={(e) =>
+                      handleStartingPointChange(index, "point", e.target.value)
+                    }
                     className={commonStyles.select}
                   >
                     <option value="">-- Chọn điểm khởi hành --</option>
@@ -193,7 +208,13 @@ export default function RecommendPhase2() {
                     type="number"
                     min="1"
                     value={sp.people}
-                    onChange={(e) => handleStartingPointChange(index, 'people', parseInt(e.target.value) || 0)}
+                    onChange={(e) =>
+                      handleStartingPointChange(
+                        index,
+                        "people",
+                        parseInt(e.target.value) || 0
+                      )
+                    }
                     className={commonStyles.input}
                     placeholder="Số người"
                   />
@@ -204,8 +225,17 @@ export default function RecommendPhase2() {
                     onClick={() => removeStartingPoint(index)}
                     className="p-2 text-red-500 hover:text-red-600"
                   >
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                      <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-5 w-5"
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
+                        clipRule="evenodd"
+                      />
                     </svg>
                   </button>
                 )}
@@ -224,7 +254,7 @@ export default function RecommendPhase2() {
           onClick={handleNext}
           disabled={!isFormValid}
           className={`${commonStyles.button} ${
-            !isFormValid ? 'opacity-50 cursor-not-allowed' : ''
+            !isFormValid ? "opacity-50 cursor-not-allowed" : ""
           }`}
         >
           Tiếp tục →

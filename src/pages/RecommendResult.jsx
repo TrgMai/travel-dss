@@ -10,14 +10,13 @@ export default function RecommendResult() {
   const navigate = useNavigate();
   const { loading, error, getRecommendations } = useRecommend();
 
-  // Hàm gọi API recommend
   const callRecommendAPI = useCallback(
     async (payload) => {
       try {
         const result = await getRecommendations(payload);
-        return result; // TRẢ VỀ dữ liệu cho handleFindTour
+        return result;
       } catch (err) {
-        throw err; // Ném lỗi để handleFindTour bắt được
+        throw err;
       }
     },
     [getRecommendations]
@@ -44,7 +43,6 @@ export default function RecommendResult() {
     }
     setAllData(data);
 
-    // Chuẩn bị dữ liệu gọi API
     const startDate = new Date(phase2Data.startDate);
     const endDate = new Date(phase2Data.endDate);
     const duration = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24));
@@ -69,7 +67,7 @@ export default function RecommendResult() {
     if (apiData && !hasCalledApi) {
       setHasCalledApi(true);
       try {
-        const result = await callRecommendAPI(apiData); // Gọi API
+        const result = await callRecommendAPI(apiData);
         localStorage.setItem("recommendResult", JSON.stringify(result));
         navigate("/recommend/tour-list");
       } catch (error) {
@@ -151,7 +149,6 @@ export default function RecommendResult() {
 
       <div className={commonStyles.card}>
         <div className="space-y-6">
-          {/* Thông tin nhóm */}
           <div>
             <h2 className="text-lg font-semibold text-gray-800 mb-3">
               Đối tượng và Số lượng
@@ -168,7 +165,6 @@ export default function RecommendResult() {
             </div>
           </div>
 
-          {/* Thời gian và địa điểm */}
           <div>
             <h2 className="text-lg font-semibold text-gray-800 mb-3">
               Thời gian và Địa điểm
@@ -207,7 +203,6 @@ export default function RecommendResult() {
             </div>
           </div>
 
-          {/* Sở thích và ngân sách */}
           <div>
             <h2 className="text-lg font-semibold text-gray-800 mb-3">
               Sở thích và Ngân sách
@@ -234,7 +229,6 @@ export default function RecommendResult() {
           </div>
         </div>
 
-        {/* Actions */}
         <div className="mt-8 space-y-4">
           <button
             type="button"

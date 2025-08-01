@@ -12,15 +12,14 @@ export default function RecommendPhase1() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
   const handleNext = () => {
-    // Lưu data vào localStorage để các phase sau có thể sử dụng
-    localStorage.setItem('phase1Data', JSON.stringify(formData));
+    localStorage.setItem("phase1Data", JSON.stringify(formData));
     navigate("/recommend/phase2");
   };
 
@@ -30,12 +29,13 @@ export default function RecommendPhase1() {
     <div className={commonStyles.container}>
       {/* Progress Bar */}
       <div className={commonStyles.progressBar}>
-        <div className={commonStyles.progressStep} style={{ width: "20%" }}></div>
+        <div
+          className={commonStyles.progressStep}
+          style={{ width: "20%" }}
+        ></div>
       </div>
 
-      <h1 className={commonStyles.title}>
-        Bước 1: Thông tin nhóm du lịch
-      </h1>
+      <h1 className={commonStyles.title}>Bước 1: Thông tin nhóm du lịch</h1>
 
       <div className={commonStyles.card}>
         <div className={commonStyles.formGroup}>
@@ -81,7 +81,7 @@ export default function RecommendPhase1() {
           onClick={handleNext}
           disabled={!isFormValid}
           className={`${commonStyles.button} ${
-            !isFormValid ? 'opacity-50 cursor-not-allowed' : ''
+            !isFormValid ? "opacity-50 cursor-not-allowed" : ""
           }`}
         >
           Tiếp tục →

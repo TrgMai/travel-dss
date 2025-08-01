@@ -11,7 +11,6 @@ export default function Header() {
 
     window.addEventListener('scroll', handleScroll);
     
-    // Cleanup listener on component unmount
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
