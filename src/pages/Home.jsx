@@ -14,11 +14,11 @@ export default function Home() {
     <div className="font-sans">
       <TopBar />
       <Header />
-      <Hero /> 
+      <Hero />
       <div className="max-w-7xl mx-auto">
         <Promotions />
       </div>
-      <StartRecommendation />
+      {/* <StartRecommendation /> */}
       <Places searchData={searchData} />
       <Footer />
     </div>

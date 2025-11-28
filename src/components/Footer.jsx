@@ -1,5 +1,13 @@
-import React from 'react';
-import { FaFacebookF, FaInstagram, FaTiktok, FaYoutube, FaTelegram, FaApple, FaGooglePlay } from 'react-icons/fa';
+import React from "react";
+import {
+  FaFacebookF,
+  FaInstagram,
+  FaTiktok,
+  FaYoutube,
+  FaTelegram,
+  FaApple,
+  FaGooglePlay,
+} from "react-icons/fa";
 
 const FooterSection = ({ title, links }) => (
   <div className="space-y-4">
@@ -7,7 +15,10 @@ const FooterSection = ({ title, links }) => (
     <ul className="space-y-2">
       {links.map((link, index) => (
         <li key={index}>
-          <a href="#" className="text-sm text-gray-400 hover:text-white hover:underline transition-colors">
+          <a
+            href="#"
+            className="text-sm text-gray-400 hover:text-white hover:underline transition-colors"
+          >
             {link}
           </a>
         </li>
@@ -19,29 +30,25 @@ const FooterSection = ({ title, links }) => (
 export default function Footer() {
   const footerLinks = {
     about: [
-      'Về Chúng Tôi',
-      'Cách Đặt Tour',
-      'Liên Hệ',
-      'Trợ Giúp',
-      'Tuyển Dụng',
+      "Về Chúng Tôi",
+      "Cách Đặt Tour",
+      "Liên Hệ",
+      "Trợ Giúp",
+      "Tuyển Dụng",
     ],
-    products: [
-      'Tour Trong Nước',
-      'Tour Quốc Tế',
-      'Điểm Tham Quan',
-    ],
+    products: ["Tour Trong Nước", "Tour Quốc Tế", "Điểm Tham Quan"],
     partners: [
-      'Đăng Ký Đối Tác Tour',
-      'Chương Trình Liên Kết',
-      'Đại Lý Du Lịch',
+      "Đăng Ký Đối Tác Tour",
+      "Chương Trình Liên Kết",
+      "Đại Lý Du Lịch",
     ],
     legal: [
-      'Điều Khoản & Điều Kiện',
-      'Quy Chế Hoạt Động',
-      'Chính Sách Bảo Mật',
-      'Quyền Riêng Tư',
-      'Chương Trình Khuyến Mãi',
-    ]
+      "Điều Khoản & Điều Kiện",
+      "Quy Chế Hoạt Động",
+      "Chính Sách Bảo Mật",
+      "Quyền Riêng Tư",
+      "Chương Trình Khuyến Mãi",
+    ],
   };
 
   return (
@@ -58,9 +65,11 @@ export default function Footer() {
         {/* Payment Methods & Social */}
         <div className="py-8 border-b">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        {/* App Download */}
+            {/* App Download */}
             <div className="">
-              <h3 className="font-semibold text-white mb-4">Tải Ứng Dụng AmazingTour</h3>
+              <h3 className="font-semibold text-white mb-4">
+                Tải Ứng Dụng AmazingTour
+              </h3>
               <div className="flex flex-wrap gap-4">
                 <button className="flex items-center gap-2 px-6 py-3 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors">
                   <FaApple size={24} />
@@ -81,30 +90,44 @@ export default function Footer() {
 
             {/* Social Links */}
             <div>
-              <h3 className="font-semibold text-white mb-4">Theo Dõi Chúng Tôi</h3>
+              <h3 className="font-semibold text-white mb-4">
+                Theo Dõi Chúng Tôi
+              </h3>
               <div className="flex gap-4">
-                <a href="#" className="p-2 bg-white rounded-full shadow-sm text-gray-400 hover:text-blue-600 transition-colors">
+                <a
+                  href="#"
+                  className="p-2 bg-white rounded-full shadow-sm text-gray-400 hover:text-blue-600 transition-colors"
+                >
                   <FaFacebookF size={20} />
                 </a>
-                <a href="#" className="p-2 bg-white rounded-full shadow-sm text-gray-400 hover:text-pink-600 transition-colors">
+                <a
+                  href="#"
+                  className="p-2 bg-white rounded-full shadow-sm text-gray-400 hover:text-pink-600 transition-colors"
+                >
                   <FaInstagram size={20} />
                 </a>
-                <a href="#" className="p-2 bg-white rounded-full shadow-sm text-gray-400 hover:text-black transition-colors">
+                <a
+                  href="#"
+                  className="p-2 bg-white rounded-full shadow-sm text-gray-400 hover:text-black transition-colors"
+                >
                   <FaTiktok size={20} />
                 </a>
-                <a href="#" className="p-2 bg-white rounded-full shadow-sm text-gray-400 hover:text-red-600 transition-colors">
+                <a
+                  href="#"
+                  className="p-2 bg-white rounded-full shadow-sm text-gray-400 hover:text-red-600 transition-colors"
+                >
                   <FaYoutube size={20} />
                 </a>
-                <a href="#" className="p-2 bg-white rounded-full shadow-sm text-gray-400 hover:text-blue-500 transition-colors">
+                <a
+                  href="#"
+                  className="p-2 bg-white rounded-full shadow-sm text-gray-400 hover:text-blue-500 transition-colors"
+                >
                   <FaTelegram size={20} />
                 </a>
               </div>
             </div>
           </div>
-
         </div>
-
-
 
         {/* Copyright */}
         <div className="pt-8 text-sm">
@@ -114,8 +137,8 @@ export default function Footer() {
           <p className="mb-2 text-gray-400">
             Địa chỉ: Tầng 1, Tòa nhà Amazing, 123 Đường ABC, Quận XYZ, TP.HCM
           </p>
-          <p className='text-white text-center'>
-            Dữ liệu được thu thập từ ivivu.com và chỉ được sử dụng cho mục đích học tập và nghiên cứu.
+          <p className="text-white text-center">
+            @2025 Copyright by ThanhLoan.
           </p>
         </div>
       </div>

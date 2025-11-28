@@ -4,9 +4,9 @@ import placesData from "../data/places";
 
 function PlaceCard({ place }) {
   const formatPrice = (price) => {
-    return new Intl.NumberFormat('vi-VN', {
-      style: 'currency',
-      currency: 'VND'
+    return new Intl.NumberFormat("vi-VN", {
+      style: "currency",
+      currency: "VND",
     }).format(price);
   };
 
@@ -25,7 +25,7 @@ function PlaceCard({ place }) {
           </span>
         </div>
       </div>
-      
+
       <div className="p-4">
         <div className="flex items-start justify-between gap-2">
           <h3 className="text-lg font-bold text-gray-800 line-clamp-2">
@@ -35,7 +35,7 @@ function PlaceCard({ place }) {
             {place.reviews} đánh giá
           </span>
         </div>
-        
+
         <div className="flex items-center gap-1 mt-2 text-gray-600">
           <FaMapMarkerAlt className="text-gray-400" />
           <span className="text-sm">{place.location}</span>
@@ -44,7 +44,7 @@ function PlaceCard({ place }) {
         <div className="mt-3 space-y-2">
           <div className="flex flex-wrap gap-2">
             {place.highlights.slice(0, 3).map((highlight, index) => (
-              <span 
+              <span
                 key={index}
                 className="px-2 py-1 text-xs bg-blue-50 text-blue-600 rounded-full"
               >
@@ -52,7 +52,7 @@ function PlaceCard({ place }) {
               </span>
             ))}
           </div>
-          
+
           <p className="text-sm text-gray-600 line-clamp-2">
             {place.description}
           </p>
@@ -63,7 +63,7 @@ function PlaceCard({ place }) {
             <span className="text-sm">Chỉ từ</span>
             <div className="font-bold">{formatPrice(place.price)}</div>
           </div>
-          
+
           <Link
             to={`/place/${place.id}`}
             className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-200"
@@ -81,8 +81,8 @@ function DestinationSection({ title, places }) {
     <div className="mt-12">
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-2xl font-bold text-gray-800">{title}</h2>
-        <Link 
-          to="/all-destinations" 
+        <Link
+          to="/all-destinations"
           className="text-blue-600 hover:text-blue-700 font-semibold"
         >
           Xem tất cả
@@ -116,22 +116,23 @@ function Places({ searchData }) {
           Địa điểm đáng ghé thăm
         </h1>
         <p className="text-gray-600 max-w-2xl mx-auto">
-          Khám phá những địa điểm đáng ghé thăm, từ bãi biển đẹp đến thành phố sôi động,
-          được tuyển chọn cẩn thận cho chuyến du lịch của bạn.
+          Khám phá những địa điểm đáng ghé thăm, từ bãi biển đẹp đến thành phố
+          sôi động, được tuyển chọn cẩn thận cho chuyến du lịch của bạn.
         </p>
       </div>
 
-      <DestinationSection 
-        title="Địa điểm trong nước" 
-        places={filterPlaces(placesData.domestic)} 
+      <DestinationSection
+        title="Địa điểm trong nước"
+        places={filterPlaces(placesData.domestic)}
       />
-      
-      <DestinationSection 
-        title="Địa điểm quốc tế" 
-        places={filterPlaces(placesData.international)} 
+
+      <DestinationSection
+        title="Địa điểm quốc tế"
+        places={filterPlaces(placesData.international)}
       />
     </div>
   );
 }
 
 export default Places;
+export { PlaceCard, DestinationSection };

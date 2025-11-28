@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, Link } from "react-router-dom";
 import { FaMapMarkerAlt } from "react-icons/fa";
 import TopBar from "../components/TopBar";
 import FilterHotel from "../components/FilterHotel";
@@ -157,14 +157,18 @@ export default function HotelList() {
                                   <span className="bg-orange-100 text-orange-600 text-xs px-2 py-1 rounded mb-2 inline-block">
                                     Giảm 20%
                                   </span>
-                                  <a
-                                    href={hotel.link}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
+                                  <Link
+                                    to="/hotel-detail"
+                                    state={{
+                                      hotel,
+                                      destination,
+                                      dateRange,
+                                      guests,
+                                    }}
                                     className="mt-2 bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 rounded transition duration-200 inline-block text-sm font-medium"
                                   >
                                     Đặt phòng
-                                  </a>
+                                  </Link>
                                 </div>
                               </>
                             ) : (
